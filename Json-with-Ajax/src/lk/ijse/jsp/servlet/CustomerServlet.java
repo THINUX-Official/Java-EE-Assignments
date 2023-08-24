@@ -33,11 +33,13 @@ public class CustomerServlet extends HttpServlet {
                 String id = rst.getString(1);
                 String name = rst.getString(2);
                 String address = rst.getString(3);
+                String salary = rst.getString(4);
 
                 JsonObjectBuilder customerObject = Json.createObjectBuilder();
                 customerObject.add("id", id);
                 customerObject.add("name", name);
                 customerObject.add("address", address);
+                customerObject.add("salary", address);
                 allCustomers.add(customerObject.build());
             }
             //create the response Object

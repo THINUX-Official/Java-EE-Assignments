@@ -77,6 +77,7 @@
                     <th>Customer ID</th>
                     <th>Customer Name</th>
                     <th>Customer Address</th>
+                    <th>Customer Salary</th>
                 </tr>
                 </thead>
                 <tbody id="tblCustomer">
@@ -113,7 +114,8 @@
                     let id = cus.id;
                     let name = cus.name;
                     let address = cus.address;
-                    let row = `<tr><td>${id}</td><td>${name}</td><td>${address}</td></tr>`;
+                    let salary = cus.cusSalary;
+                    let row = `<tr><td>${id}</td><td>${name}</td><td>${address}</td><td>${salary}</td></tr>`;
                     $("#tblCustomer").append(row);
                 }
             },
@@ -173,8 +175,8 @@
         $.ajax({
             url: 'customer',
             method: 'put',
-            contentType:"application/json",
-            data:JSON.stringify(a),
+            contentType: "application/json",
+            data: JSON.stringify(a),
             success: function (resp) {
                 getAllCustomers();
             }
