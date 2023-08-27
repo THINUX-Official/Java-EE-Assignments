@@ -4,12 +4,12 @@ public class CustomerDTO {
     private String id;
     private String name;
     private String address;
-    private String salary;
+    private Double salary;
 
     public CustomerDTO() {
     }
 
-    public CustomerDTO(String id, String name, String address, String salary) {
+    public CustomerDTO(String id, String name, String address, Double salary) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -40,11 +40,11 @@ public class CustomerDTO {
         this.address = address;
     }
 
-    public String getSalary() {
+    public Double getSalary() {
         return salary;
     }
 
-    public void setSalary(String salary) {
+    public void setSalary(Double salary) {
         this.salary = salary;
     }
 
@@ -54,7 +54,7 @@ public class CustomerDTO {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
-                ", salary='" + salary + '\'' +
+                ", salary=" + salary +
                 '}';
     }
 }
