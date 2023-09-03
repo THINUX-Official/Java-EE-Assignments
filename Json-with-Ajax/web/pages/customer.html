@@ -60,7 +60,7 @@
                         Save Customer
                     </button>
                     <button type="button" class="btn btn-danger"
-                            id="btnCusDelete">Remove
+                            id="btnDelete">Remove
                     </button>
                     <button type="button" class="btn btn-warning"
                             id="btnUpdate">Update
@@ -143,7 +143,7 @@
         });
     });
 
-    $("#btnCusDelete").click(function () {
+    $("#btnDelete").click(function () {
         let formData = $("#customerForm").serialize();
         $.ajax({
             url: 'customer?option=delete',
@@ -168,8 +168,7 @@
             "cusName": name,
             "cusAddress": address,
             "cusSalary": salary
-        }
-
+        };
 
         $.ajax({
             url: 'customer',

@@ -60,6 +60,7 @@ public class CustomerServlet extends HttpServlet {
 
         try {
             forName("com.mysql.jdbc.Driver");
+
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pos_one", "root", "1234");
 
             PreparedStatement pstm = connection.prepareStatement("INSERT INTO customer VALUES(?,?,?,?)");
@@ -97,15 +98,20 @@ public class CustomerServlet extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         //Add Headers
-        resp.addHeader("Access-Control-Allow-Origin", "*");
-        resp.addHeader("Content-Type", "application/json");
+//        resp.addHeader("Access-Control-Allow-Origin", "*");
+//        resp.addHeader("Content-Type", "application/json");
 
-        JsonReader reader = Json.createReader(req.getReader());
-        JsonObject jsonObject = reader.readObject();
-        String cusID = jsonObject.getString("cusID");
-        String cusName = jsonObject.getString("cusName");
-        String cusAddress = jsonObject.getString("cusAddress");
-        String cusSalary = jsonObject.getString("cusSalary");
+//        JsonReader reader = Json.createReader(req.getReader());
+//        JsonObject jsonObject = reader.readObject();
+//        String cusID = jsonObject.getString("cusID");
+//        String cusName = jsonObject.getString("cusName");
+//        String cusAddress = jsonObject.getString("cusAddress");
+//        String cusSalary = jsonObject.getString("cusSalary");
+
+        String cusID = req.getParameter("cusID");
+        String cusName = req.getParameter("cusName");
+        String cusAddress = req.getParameter("cusAddress");
+        String cusSalary = req.getParameter("cusSalary");
 
         try {
             forName("com.mysql.jdbc.Driver");
@@ -113,6 +119,7 @@ public class CustomerServlet extends HttpServlet {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pos_one", "root", "1234");
 
             PreparedStatement pstm = connection.prepareStatement("UPDATE customer set name=?,address=?, salary=?, where id=?");
+
             pstm.setObject(4, cusID);
             pstm.setObject(1, cusName);
             pstm.setObject(2, cusAddress);
@@ -130,7 +137,6 @@ public class CustomerServlet extends HttpServlet {
             resp.setStatus(500);
             resp.getWriter().print(ResponseUtil.genJson("Error", e.getMessage()));
         }
-
 
     }
 
