@@ -93,23 +93,16 @@
 <script src="../assets/js/jquery-3.6.1.min.js"></script>
 <script src="../assets/js/bootstrap.min.js"></script>
 
-
-<!--bind a event on btn GetAll btn-->
 <script>
 
     bindClickRowEventClick();
     getAllCustomers();
-
-    /*$("#btnGetAll").click(function () {
-        getAllCustomers();
-    });*/
 
     function getAllCustomers() {
         $("#tblCustomer").empty();
         <!--send ajax request to the customer servlet using jQuery-->
         $.ajax({
             url: 'customer',
-            // method: "GET",
 
             success: function (customers) {
                 for (let i = 0; i <= customers.length; i++) {
@@ -148,8 +141,9 @@
         let formData = $("#customerForm").serialize();
         $.ajax({
             url: 'customer?option=delete',
-            method: 'post',
+            method: 'POST',
             data: formData,
+
             success: function (resp) {
                 getAllCustomers();
             }
@@ -215,6 +209,7 @@
 
         console.log(id, name, address, contact);
     }
+
 </script>
 </body>
 </html>
