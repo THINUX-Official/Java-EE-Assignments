@@ -102,17 +102,6 @@ public class CustomerServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        //Add Headers
-//        resp.addHeader("Access-Control-Allow-Origin", "*");
-//        resp.addHeader("Content-Type", "application/json");
-
-//        JsonReader reader = Json.createReader(req.getReader());
-//        JsonObject jsonObject = reader.readObject();
-//        String cusID = jsonObject.getString("cusID");
-//        String cusName = jsonObject.getString("cusName");
-//        String cusAddress = jsonObject.getString("cusAddress");
-//        String cusSalary = jsonObject.getString("cusSalary");
-
         String cusID = req.getParameter("cusID");
         String cusName = req.getParameter("cusName");
         String cusAddress = req.getParameter("cusAddress");
@@ -125,24 +114,39 @@ public class CustomerServlet extends HttpServlet {
 
             PreparedStatement pstm = connection.prepareStatement("UPDATE customer set name=?,address=?, salary=?, where id=?");
 
-            pstm.setObject(4, cusID);
             pstm.setObject(1, cusName);
             pstm.setObject(2, cusAddress);
             pstm.setObject(3, cusSalary);
+            pstm.setObject(4, cusID);
 
             if (pstm.executeUpdate() > 0) {
-                resp.getWriter().print(ResponseUtil.genJson("Success", "Customer Updated..!"));
-            } else {
-                resp.getWriter().print(ResponseUtil.genJson("Failed", "Customer Updated Failed..!"));
-            }
-        } catch (ClassNotFoundException e) {
-            resp.setStatus(500);
-            resp.getWriter().print(ResponseUtil.genJson("Error", e.getMessage()));
-        } catch (SQLException e) {
-            resp.setStatus(500);
-            resp.getWriter().print(ResponseUtil.genJson("Error", e.getMessage()));
-        }
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status", "success");
+                objectBuilder.add("message", "Successfully Updated!");
+                resp.setContentType("application/json");
+                resp.getWriter().print(objectBuilder.build());
 
+            } else {
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status", "fail");
+                objectBuilder.add("message", "Error!");
+                resp.setContentType("application/json");
+                resp.setStatus(400);
+                resp.getWriter().print(objectBuilder.build());
+            }
+
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+
+        } catch (SQLException e) {
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("status", "success");
+            objectBuilder.add("message", e.getMessage());
+            objectBuilder.add("data", e.getErrorCode());
+            resp.setContentType("application/json");
+            resp.setStatus(400);
+            resp.getWriter().print(objectBuilder.build());
+        }
     }
 
     @Override
