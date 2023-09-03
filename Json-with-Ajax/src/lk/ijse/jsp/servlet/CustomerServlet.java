@@ -151,36 +151,42 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //Add Headers
-        resp.addHeader("Access-Control-Allow-Origin", "*");
-        resp.addHeader("Content-Type", "application/json");
-
         String cusID = req.getParameter("cusID");
+
         try {
             forName("com.mysql.jdbc.Driver");
+
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pos_one", "root", "1234");
 
             PreparedStatement pstm = connection.prepareStatement("DELETE FROM customer WHERE id=?");
+
             pstm.setObject(1, cusID);
 
             if (pstm.executeUpdate() > 0) {
-                resp.getWriter().print(ResponseUtil.genJson("Success", "Customer Deleted..!"));
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status", "success");
+                objectBuilder.add("message", "Customer Deleted!");
+                resp.setContentType("application/json");
+                resp.getWriter().print(objectBuilder.build());
             } else {
-                resp.getWriter().print(ResponseUtil.genJson("Failed", "Customer Delete Failed..!"));
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status", "fail");
+                objectBuilder.add("message", "Customer Deletion Failed!");
+                resp.setContentType("application/json");
+                resp.setStatus(400);
+                resp.getWriter().print(objectBuilder.build());
             }
         } catch (ClassNotFoundException e) {
-            resp.setStatus(500);
-            resp.getWriter().print(ResponseUtil.genJson("Error", e.getMessage()));
-        } catch (SQLException e) {
-            resp.setStatus(500);
-            resp.getWriter().print(ResponseUtil.genJson("Error", e.getMessage()));
-        }
-    }
+            throw new RuntimeException(e);
 
-    @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.addHeader("Access-Control-Allow-Origin", "*");
-        resp.addHeader("Access-Control-Allow-Methods", "PUT, DELETE");
-        resp.addHeader("Access-Control-Allow-Headers", "content-type");
+        } catch (SQLException e) {
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("status", "success");
+            objectBuilder.add("message", e.getMessage());
+            objectBuilder.add("data", e.getErrorCode());
+            resp.setContentType("application/json");
+            resp.setStatus(400);
+            resp.getWriter().print(objectBuilder.build());
+        }
     }
 }
