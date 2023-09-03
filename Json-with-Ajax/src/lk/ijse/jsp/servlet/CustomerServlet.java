@@ -112,7 +112,7 @@ public class CustomerServlet extends HttpServlet {
 
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pos_one", "root", "1234");
 
-            PreparedStatement pstm = connection.prepareStatement("UPDATE customer set name=?,address=?, salary=?, where id=?");
+            PreparedStatement pstm = connection.prepareStatement("UPDATE customer SET name=?,address=?, salary=? WHERE id=?");
 
             pstm.setObject(1, cusName);
             pstm.setObject(2, cusAddress);

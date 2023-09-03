@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
+import static java.lang.Class.forName;
+
 @WebServlet(urlPatterns = "/pages/item")
 public class ItemServlet extends HttpServlet {
 
@@ -57,8 +59,8 @@ public class ItemServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String code = req.getParameter("code");
-        String name = req.getParameter("description");
-        String qtyOnHand = req.getParameter("qty");
+        String desc = req.getParameter("description");
+        String qty = req.getParameter("qty");
         String unitPrice = req.getParameter("unitPrice");
 
         String option = req.getParameter("option");
@@ -70,11 +72,11 @@ public class ItemServlet extends HttpServlet {
 
             switch (option) {
                 case "add":
-                    PreparedStatement pstm = connection.prepareStatement("insert into Item values(?,?,?,?)");
+                    PreparedStatement pstm = connection.prepareStatement("INSERT INTEO item VALUES (?, ?, ?, ?)");
 
                     pstm.setObject(1, code);
-                    pstm.setObject(2, name);
-                    pstm.setObject(3, qtyOnHand);
+                    pstm.setObject(2, desc);
+                    pstm.setObject(3, qty);
                     pstm.setObject(4, unitPrice);
 
                     if (pstm.executeUpdate() > 0) {
@@ -99,6 +101,56 @@ public class ItemServlet extends HttpServlet {
         } catch (SQLException e) {
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
             objectBuilder.add("error", e.getMessage());
+            resp.setContentType("application/json");
+            resp.setStatus(400);
+            resp.getWriter().print(objectBuilder.build());
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String code = req.getParameter("code");
+        String desc = req.getParameter("description");
+        String qty = req.getParameter("qty");
+        String unitPrice = req.getParameter("unitPrice");
+
+        try {
+            forName("com.mysql.jdbc.Driver");
+
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pos_one", "root", "1234");
+
+            PreparedStatement pstm = connection.prepareStatement("UPDATE item SET description=?, qty=?, unitPrice=? WHERE code=?");
+
+            pstm.setObject(1, desc);
+            pstm.setObject(2, qty);
+            pstm.setObject(3, unitPrice);
+            pstm.setObject(4, code);
+
+            if (pstm.executeUpdate() > 0) {
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status", "success");
+                objectBuilder.add("message", "Successfully Updated!");
+                resp.setContentType("application/json");
+                resp.getWriter().print(objectBuilder.build());
+
+            } else {
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status", "fail");
+                objectBuilder.add("message", "Error!");
+                resp.setContentType("application/json");
+                resp.setStatus(400);
+                resp.getWriter().print(objectBuilder.build());
+            }
+
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+
+        } catch (SQLException e) {
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("status", "success");
+            objectBuilder.add("message", e.getMessage());
+            objectBuilder.add("data", e.getErrorCode());
             resp.setContentType("application/json");
             resp.setStatus(400);
             resp.getWriter().print(objectBuilder.build());
