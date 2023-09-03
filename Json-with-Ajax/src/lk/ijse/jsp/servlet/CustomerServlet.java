@@ -1,7 +1,5 @@
 package lk.ijse.jsp.servlet;
 
-import lk.ijse.jsp.servlet.util.ResponseUtil;
-
 import javax.json.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -58,29 +56,36 @@ public class CustomerServlet extends HttpServlet {
         String cusAddress = req.getParameter("cusAddress");
         String cusSalary = req.getParameter("cusSalary");
 
+        String option = req.getParameter("option");
+
         try {
             forName("com.mysql.jdbc.Driver");
 
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pos_one", "root", "1234");
 
-            PreparedStatement pstm = connection.prepareStatement("INSERT INTO customer VALUES(?,?,?,?)");
+            switch (option) {
+                case "add":
 
-            pstm.setObject(1, cusID);
-            pstm.setObject(2, cusName);
-            pstm.setObject(3, cusAddress);
-            pstm.setObject(4, cusSalary);
+                    PreparedStatement pstm = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?)");
 
-            if (pstm.executeUpdate() > 0) {
-                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("status", "success");
-                objectBuilder.add("message", "Successfully Added!");
-                resp.setContentType("application/json");
-                resp.getWriter().print(objectBuilder.build());
+                    pstm.setObject(1, cusID);
+                    pstm.setObject(2, cusName);
+                    pstm.setObject(3, cusAddress);
+                    pstm.setObject(4, cusSalary);
 
-            } else {
-                resp.getWriter().println("Error!");
+                    if (pstm.executeUpdate() > 0) {
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("status", "success");
+                        objectBuilder.add("message", "Successfully Added!");
+                        resp.setContentType("application/json");
+                        resp.getWriter().print(objectBuilder.build());
+
+                    } else {
+                        resp.getWriter().println("Error!");
+                    }
+
+                    break;
             }
-
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         } catch (SQLException e) {
